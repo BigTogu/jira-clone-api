@@ -1,6 +1,18 @@
 import { Router } from "express";
+import jwt from "jsonwebtoken";
 
 const router = Router();
+
+const getToken = (username) => {
+  let token = jwt.sign(
+    {
+      username: username,
+    },
+    "secret-password",
+    { expiresIn: "48h" }
+  );
+  return token;
+};
 
 const users = [
   {
@@ -28,13 +40,12 @@ router.get("/", (req, res) => {
 });
 
 router.post("/login", (req, res) => {
-  console.log(req.body);
   const { username, password } = req.body;
   const foundUser = users.find((user) => user.username == username);
   if (foundUser) {
     if (foundUser.password == password) {
       res.json({
-        Title: "Conéctando...",
+        token: getToken(username),
       });
     }
     res.json({
