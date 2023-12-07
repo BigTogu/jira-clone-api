@@ -6,7 +6,7 @@ import sequelize from "./db/config.js";
 const app = express();
 
 // Settings
-app.set("port", process.env.PORT || 3000);
+app.set("port", process.env.PORT || 8000);
 app.set("json spaces", 2);
 
 app.use(express.json());
