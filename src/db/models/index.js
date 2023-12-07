@@ -1,31 +1,37 @@
-import { Model, DataTypes } from "sequelize";
+import { Model, DataTypes, Sequelize } from "sequelize";
 import sequelize from "../config.js";
+import bcrypt from "bcrypt";
 
 export const User = sequelize.define(
   "User",
   {
     id: {
-      type: DataTypes.UUID,
+      type: Sequelize.UUID,
       allowNull: false,
-      defaultValue: DataTypes.UUID,
       primaryKey: true,
+      defaultValue: Sequelize.UUIDV4,
     },
     username: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+      set(value) {
+        const hash = bcrypt.hashSync(value, 10);
+        this.setDataValue("password", hash);
+      },
     },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     group_id: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      defaultValue: DataTypes.UUID,
+      type: Sequelize.UUID,
+      allowNull: true,
     },
   },
   { tableName: "users" }
