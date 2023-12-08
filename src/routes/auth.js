@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import claveSecreta from '../constants/configs.js';
+import { claveSecreta } from '../constants/configs.js';
 
 export function getToken(username) {
 	let token = jwt.sign(
