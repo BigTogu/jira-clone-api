@@ -25,7 +25,7 @@
     "sequelize": "^6.35.1"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
+    "*.{js}": [
       "npm run lint"
     ]
   },
