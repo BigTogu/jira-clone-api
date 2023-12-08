@@ -5,8 +5,7 @@ import sequelize from './db/config.js';
 const app = express();
 
 // Settings
-// eslint-disable-next-line no-undef
-app.set('port', process.env.PORT || 8000);
+app.set('port', 8000);
 app.set('json spaces', 2);
 
 app.use(express.json());

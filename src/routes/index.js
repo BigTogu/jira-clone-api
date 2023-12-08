@@ -1,19 +1,8 @@
 import { Router } from 'express';
-import jwt from 'jsonwebtoken';
 import { User } from '../db/models/index.js';
+import getToken from './auth.js';
 
 const router = Router();
-
-const getToken = (username) => {
-	let token = jwt.sign(
-		{
-			username: username,
-		},
-		'secret-password',
-		{ expiresIn: '48h' }
-	);
-	return token;
-};
 
 router.get('/', (req, res) => {
 	res.json({
@@ -35,9 +24,9 @@ router.get('/register', (req, res) => {
 				token: getToken(username),
 			});
 		})
-		.catch((error) => {
+		.catch(error => {
 			res.json({
-				title: `error: ${error}`,
+				error: error,
 			});
 		});
 });
@@ -50,16 +39,16 @@ router.post('/login', (req, res) => {
 			username: username,
 		},
 	})
-		.then((user) => {
+		.then(user => {
 			user
 				.validPassword(password)
-				.then((isValidPassword) => {
+				.then(isValidPassword => {
 					if (isValidPassword) return res.json({ token: getToken(username) });
 					res.json('Contraseña no válida');
 				})
-				.catch((error) => {
+				.catch(error => {
 					res.json({
-						error,
+						error: error,
 					});
 				});
 		})
