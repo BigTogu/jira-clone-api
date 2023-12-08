@@ -1,12 +1,8 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../db/models/index.js";
-import bcrypt from "bcrypt";
 
 const router = Router();
-const validPassword = (password, encryptedPassword) => {
-  return bcrypt.compare(password, encryptedPassword);
-};
 
 const getToken = (username) => {
   let token = jwt.sign(
@@ -48,21 +44,22 @@ router.get("/register", (req, res) => {
 
 router.post("/login", (req, res) => {
   const { username, password } = req.body;
+
   User.findOne({
     where: {
       username: username,
     },
   })
     .then((user) => {
-      validPassword(password, user.password)
+      user
+        .validPassword(password)
         .then((isValidPassword) => {
           if (isValidPassword) return res.json({ token: getToken(username) });
-
           res.json("Contraseña no válida");
         })
         .catch((error) => {
           res.json({
-            Title: error,
+            error,
           });
         });
     })

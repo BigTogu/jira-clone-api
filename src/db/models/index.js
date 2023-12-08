@@ -19,10 +19,6 @@ export const User = sequelize.define(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-      set(value) {
-        const hash = bcrypt.hashSync(value, 10);
-        this.setDataValue("password", hash);
-      },
     },
     email: {
       type: DataTypes.STRING,
@@ -34,8 +30,24 @@ export const User = sequelize.define(
       allowNull: true,
     },
   },
-  { tableName: "users" }
+  {
+    tableName: "users",
+  }
 );
+
+User.beforeCreate((user, options) => {
+  return bcrypt
+    .hash(user.password, 10)
+    .then((hash) => {
+      user.password = hash;
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+});
+User.prototype.validPassword = function (password) {
+  return bcrypt.compare(password, this.password);
+};
 
 export const Group = sequelize.define(
   "Group",
