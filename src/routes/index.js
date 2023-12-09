@@ -57,4 +57,8 @@ router.post('/login', (req, res) => {
 		});
 });
 
+router.get('/rompela', (req, res) => {
+	res.json('Lo has conseguido');
+});
+
 export default router;
