@@ -2,12 +2,20 @@ import jwt from 'jsonwebtoken';
 import { claveSecreta } from '../constants/configs.js';
 
 export function getToken(username) {
-	let token = jwt.sign(
+	return jwt.sign(
 		{
 			username: username,
 		},
 		claveSecreta,
 		{ expiresIn: '48h' },
 	);
-	return token;
+}
+
+export function getUsernameFromToken(token) {
+	return jwt.verify(token, claveSecreta, function (err, decoded) {
+		if (err) {
+			return [err, null];
+		}
+		return [null, decoded];
+	});
 }
