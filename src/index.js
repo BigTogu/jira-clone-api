@@ -1,6 +1,6 @@
 import express from 'express';
-//import morgan from "morgan";
-import router from './routes/index.js';
+import routerGet from './routes/get/User/index.js';
+import routerPost from './routes/post/User/index.js';
 import sequelize from './db/config.js';
 import { unless, middleware } from './middlelware/index.js';
 
@@ -12,7 +12,8 @@ app.set('json spaces', 2);
 
 app.use(express.json());
 app.use(unless(middleware, '/login', '/register'));
-app.use(router);
+app.use(routerGet);
+app.use(routerPost);
 
 sequelize
 	.sync()
