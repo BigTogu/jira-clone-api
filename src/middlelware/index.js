@@ -1,38 +1,35 @@
-import { getUsernameFromToken } from '../routes/auth.js';
+import { getUsernameFromToken } from '../auth/index.js';
 import { User } from '../db/models/index.js';
 
-export function middleware(req, res, next) {
-	const { authorization } = req.headers;
-	if (authorization?.includes('Bearer')) {
-		const token = authorization?.split(' ')[1];
-		const [err, tokenDecoded] = getUsernameFromToken(token);
+export async function middleware(req, res, next) {
+	try {
+		const { authorization } = req.headers;
 
-		if (err) {
-			return res.status(403).json({
-				err,
+		if (authorization?.startsWith('Bearer')) {
+			const token = authorization?.split(' ')[1];
+			const [err, tokenDecoded] = getUsernameFromToken(token);
+
+			if (err) {
+				return res.status(403).json({ error: err });
+			}
+
+			const { username } = tokenDecoded;
+			const user = await User.findOne({ where: { username } });
+
+			if (user) {
+				return next();
+			} else {
+				res.status(403).json({ error: { message: 'Usuario no encontrado' } });
+			}
+		} else {
+			res.status(403).json({
+				error: { message: 'Formato de token incorrecto' },
 			});
 		}
-		const { username } = tokenDecoded;
-
-		User.findOne({
-			where: {
-				username: username,
-			},
-		})
-			.then(user => {
-				if (user) {
-					return next();
-				} else {
-					res.status(403).json({ error: { message: 'Usuario no encontrado' } });
-				}
-			})
-			.catch(error => {
-				res.status(403).json({ error });
-			});
-	} else {
-		res.status(403).json({
-			error: { message: 'Formato de token incorrecto' },
-		});
+	} catch (error) {
+		return res
+			.status(500)
+			.json({ error: { message: 'Error interno del servidor' } });
 	}
 }
 
