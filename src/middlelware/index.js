@@ -1,4 +1,4 @@
-import { getUsernameFromToken } from '../auth/index.js';
+import { getIdFromToken } from '../auth/index.js';
 import { User } from '../db/models/index.js';
 
 export async function middleware(req, res, next) {
@@ -7,16 +7,17 @@ export async function middleware(req, res, next) {
 
 		if (authorization?.startsWith('Bearer')) {
 			const token = authorization?.split(' ')[1];
-			const [err, tokenDecoded] = getUsernameFromToken(token);
+			const [err, tokenDecoded] = getIdFromToken(token);
 
 			if (err) {
 				return res.status(403).json({ error: err });
 			}
 
-			const { username } = tokenDecoded;
-			const user = await User.findOne({ where: { username } });
+			const { id } = tokenDecoded;
+			const user = await User.findOne({ where: { id } });
 
 			if (user) {
+				req.user = user;
 				return next();
 			} else {
 				res.status(403).json({ error: { message: 'Usuario no encontrado' } });
@@ -27,15 +28,9 @@ export async function middleware(req, res, next) {
 			});
 		}
 	} catch (error) {
+		console.log(error, 'error');
 		return res
 			.status(500)
 			.json({ error: { message: 'Error interno del servidor' } });
 	}
-}
-
-export function unless(...paths) {
-	return function (req, res, next) {
-		const pathCheck = paths.some(path => path === req.path);
-		pathCheck ? next() : middleware(req, res, next);
-	};
 }
