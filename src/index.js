@@ -1,8 +1,8 @@
 import express from 'express';
-import routerGet from './routes/get/User/index.js';
-import routerPost from './routes/post/User/index.js';
+import authRouter from './routes/User/auth.js';
+import router from './routes/User/index.js';
 import sequelize from './db/config.js';
-import { unless, middleware } from './middlelware/index.js';
+import { middleware } from './middlelware/index.js';
 
 const app = express();
 
@@ -11,9 +11,10 @@ app.set('port', 8000);
 app.set('json spaces', 2);
 
 app.use(express.json());
-app.use(unless(middleware, '/login', '/register'));
-app.use(routerGet);
-app.use(routerPost);
+
+app.use(authRouter);
+app.use(middleware);
+app.use(router);
 
 sequelize
 	.sync()
