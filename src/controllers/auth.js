@@ -1,28 +1,25 @@
 import { User } from '../db/models/index.js';
 import { getToken } from '../auth/index.js';
+import { AppError } from '../statusCodes/error.js';
 
-export async function register(req, res) {
+export async function register(req, res, next) {
 	try {
 		const { username, password } = req.body;
-
 		const newUser = await User.create({
 			username: username,
 			password: password,
 			email: username,
 		});
-
 		res.json({
 			message: 'Usuario creado',
 			token: getToken(newUser.id),
 		});
 	} catch (error) {
-		res.status(500).json({
-			error: error.message || 'Error interno del servidor',
-		});
+		return next(new AppError(error.message, 500));
 	}
 }
 
-export async function login(req, res) {
+export async function login(req, res, next) {
 	try {
 		const { username, password } = req.body;
 		const user = await User.findOne({
@@ -31,17 +28,15 @@ export async function login(req, res) {
 			},
 		});
 		if (!user) {
-			return res.status(404).json({ message: 'Usuario no encontrado' });
+			return next(new AppError('Usuario no encontrado', 404));
 		}
 
 		const isValidPassword = await user.validPassword(password);
 		if (isValidPassword) return res.json({ token: getToken(user.id) });
 		else {
-			res.json('Contraseña no válida');
+			return next(new AppError('Contraseña no válida', 400));
 		}
 	} catch (error) {
-		return res
-			.status(500)
-			.json({ error: error.message || 'Error interno del servidor' });
+		return next(new AppError(error.message, 500));
 	}
 }
