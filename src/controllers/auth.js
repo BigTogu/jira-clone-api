@@ -10,7 +10,7 @@ export async function register(req, res, next) {
 			password: password,
 			email: username,
 		});
-		res.json({
+		res.status(201).json({
 			message: 'Usuario creado',
 			token: getToken(newUser.id),
 		});
