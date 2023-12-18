@@ -104,3 +104,45 @@ describe('GET /', () => {
 		expect(response.statusCode).toBe(200);
 	});
 });
+
+describe('PUT /me', () => {
+	test('should respond with a 200 status code', async () => {
+		const headerAuthentication = await getAuthenticationHeader(
+			userCorrectData.username,
+		);
+		const response = await request(app)
+			.put('/me')
+			.set('authorization', headerAuthentication)
+			.send();
+
+		expect(response.statusCode).toBe(200);
+	});
+
+	test('should respond with a json object containing the user with a id, username and email', async () => {
+		const expectedFields = [
+			'username',
+			'email',
+			'id',
+			'createdAt',
+			'password',
+			'updatedAt',
+			'group_id',
+		];
+
+		const userData = {
+			username: 'TogulinHermoso',
+		};
+
+		const headerAuthentication = await getAuthenticationHeader(
+			userCorrectData.username,
+		);
+		const response = await request(app)
+			.put('/me')
+			.set('authorization', headerAuthentication)
+			.send(userData);
+
+		expectedFields.forEach(field => {
+			expect(response.body.title[field]).toBeDefined();
+		});
+	});
+});
