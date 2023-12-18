@@ -22,7 +22,6 @@ export async function getMe(req, res, next) {
 
 export async function updateMe(req, res) {
 	const { username, email } = req.body;
-	console.log(username);
 	let updateValues = {};
 	if (username) updateValues.username = username;
 	if (email) updateValues.email = email;
