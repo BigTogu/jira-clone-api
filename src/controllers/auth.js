@@ -1,15 +1,24 @@
 import { User } from '../db/models/index.js';
 import { getToken } from '../auth/index.js';
 import { AppError } from '../statusCodes/error.js';
+import { sendEmail } from '../utils/sendEmail.js';
 
 export async function register(req, res, next) {
 	try {
-		const { username, password } = req.body;
+		const { username, password, email } = req.body;
 		const newUser = await User.create({
 			username: username,
 			password: password,
-			email: username,
+			email: email,
 		});
+
+		await sendEmail(
+			email,
+			'Account Verification Link',
+			`Hello, ${username} Please verify your email by
+		clicking this link:`,
+		);
+
 		res.status(201).json({
 			message: 'Usuario creado',
 			token: getToken(newUser.id),
