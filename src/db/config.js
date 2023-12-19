@@ -1,6 +1,8 @@
 import { Sequelize } from 'sequelize';
+import 'dotenv/config';
 
-const database = 'jira';
+// eslint-disable-next-line no-undef
+const database = process.env.DB;
 const username = 'postgres';
 const password = 'postgres';
 const host = 'localhost';
@@ -15,7 +17,7 @@ sequelize
 	.then(() => {
 		console.log('Connection has been established successfully.');
 	})
-	.catch((error) => {
+	.catch(error => {
 		console.error('Unable to connect to the database: ', error);
 	});
 

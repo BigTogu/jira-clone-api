@@ -3,11 +3,15 @@ import authRouter from './routes/User/auth.js';
 import router from './routes/User/index.js';
 import { middleware } from './middlelware/index.js';
 import { handleError } from './statusCodes/error.js';
+import '../config/index.js';
 
 const app = express();
 
+// eslint-disable-next-line no-undef
+const PORT = process.env.PORT || 3000;
+
 // Settings
-app.set('port', 8000);
+app.set('port', PORT);
 app.set('json spaces', 2);
 
 app.use(express.json());
