@@ -19,19 +19,12 @@ describe('POST /register', () => {
 	});
 
 	test('password is encrypted', async () => {
-		const userData = {
-			username: 'Togu',
-			password: 'test',
-			email: 'none',
-		};
-		await request(app).post('/register').send(userData);
-
 		const user = await User.findOne({
-			where: { username: 'Togu' },
+			where: { username: userCorrectData.username },
 		});
 
 		const isPasswordEncrypted = await bcrypt.compare(
-			userData.password,
+			userCorrectData.password,
 			user.password,
 		);
 		expect(isPasswordEncrypted).toBe(true);
@@ -130,7 +123,7 @@ describe('PUT /me', () => {
 		];
 
 		const userData = {
-			username: 'TogulinHermoso',
+			username: userCorrectData.username,
 		};
 
 		const headerAuthentication = await getAuthenticationHeader(
