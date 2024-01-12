@@ -1,11 +1,11 @@
+/* eslint-disable no-undef */
 import { Sequelize } from 'sequelize';
-import 'dotenv/config';
 
-// eslint-disable-next-line no-undef
-const database = process.env.DB;
-const username = 'postgres';
-const password = 'postgres';
-const host = 'localhost';
+const database = process.env.DB_DATABASE;
+const username = process.env.DB_USERNAME;
+const password = process.env.DB_PASSWORD;
+const host = process.env.DB_HOST;
+console.log(database);
 
 const sequelize = new Sequelize(database, username, password, {
 	host: host,
