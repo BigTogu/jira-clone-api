@@ -3,7 +3,6 @@ import authRouter from './routes/User/auth.js';
 import router from './routes/User/index.js';
 import { middleware } from './middlelware/index.js';
 import { handleError } from './statusCodes/error.js';
-import '../config/index.js';
 
 const app = express();
 

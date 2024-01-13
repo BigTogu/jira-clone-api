@@ -12,7 +12,6 @@ const envEnvironment = process.env.ENVIRONMENT
 	: '.env';
 const envPath = path.resolve(__dirname, `../${envEnvironment}`);
 
-console.log(envPath);
 export default dotenv.config({
 	path: envPath,
 });

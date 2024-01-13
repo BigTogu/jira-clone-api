@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import nodemailer from 'nodemailer';
-import '../../config/index.js';
 
 export async function sendEmail(email, subject, text, verifyToken) {
 	try {

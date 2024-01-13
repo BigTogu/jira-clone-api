@@ -1,4 +1,4 @@
-import { getIdFromToken } from '../auth/index.js';
+import { getIdFromToken } from '../jwt/index.js';
 import { User } from '../db/models/index.js';
 
 export async function middleware(req, res, next) {

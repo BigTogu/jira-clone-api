@@ -1,13 +1,13 @@
 import { User } from '../db/models/index.js';
-import { getToken } from '../auth/index.js';
+import { getToken } from '../jwt/index.js';
 import { AppError } from '../statusCodes/error.js';
 import { sendEmail } from '../utils/sendEmail.js';
-import { getIdFromToken } from '../auth/index.js';
+import { getIdFromToken } from '../jwt/index.js';
 
 export async function register(req, res, next) {
 	try {
 		const { username, password, email } = req.body;
-
+		console.log(username, password, email, '-------------');
 		const newUser = await User.create({
 			username: username,
 			password: password,
