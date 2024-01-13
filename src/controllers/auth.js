@@ -73,10 +73,9 @@ export async function emailConfirmation(req, res, next) {
 			await user.save();
 		}
 
-		// res.json({
-		// 	title: 'Te has registrado correctamente',
-		// });
-		res.redirect('/login');
+		res.json({
+			token: token,
+		});
 	} catch (error) {
 		return next(new AppError(error.message, 500));
 	}
