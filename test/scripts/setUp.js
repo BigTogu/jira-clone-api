@@ -1,5 +1,5 @@
 import { User } from '../../src/db/models/index.js';
-import { getToken } from '../../src/auth';
+import { getToken } from '../../src/jwt/index.js';
 import { userCorrectData } from './constants.js';
 
 // eslint-disable-next-line no-undef

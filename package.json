@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test jest --detectOpenHandles",
+    "test": "DOTENV_CONFIG_PATH=.env.test jest --detectOpenHandles",
     "dev": "nodemon -r dotenv/config src/index.js dotenv_config_path=.env.local dotenv_config_debug=true",
     "dev-with-local": "node -r dotenv/config src/index.js dotenv_config_path=.env.local dotenv_config_debug=true",
     "lint": "eslint src/**/*.js",
