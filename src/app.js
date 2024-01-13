@@ -3,6 +3,7 @@ import authRouter from './routes/User/auth.js';
 import router from './routes/User/index.js';
 import { middleware } from './middlelware/index.js';
 import { handleError } from './statusCodes/error.js';
+import cors from 'cors';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.set('json spaces', 2);
 
 app.use(express.json());
 
+app.use(cors());
 app.use(authRouter);
 app.use(middleware);
 app.use(router);
