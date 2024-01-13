@@ -2,21 +2,26 @@ import { User } from '../db/models/index.js';
 import { getToken } from '../auth/index.js';
 import { AppError } from '../statusCodes/error.js';
 import { sendEmail } from '../utils/sendEmail.js';
+import { getIdFromToken } from '../auth/index.js';
 
 export async function register(req, res, next) {
 	try {
 		const { username, password, email } = req.body;
+
 		const newUser = await User.create({
 			username: username,
 			password: password,
 			email: email,
 		});
 
+		const verifyToken = getToken(newUser.id, true);
+		console.log(verifyToken, 'verifyLog');
 		await sendEmail(
 			email,
 			'Account Verification Link',
 			`Hello, ${username} Please verify your email by
 		clicking this link:`,
+			verifyToken,
 		);
 
 		res.status(201).json({
@@ -46,6 +51,29 @@ export async function login(req, res, next) {
 			return next(new AppError('Contraseña no válida', 400));
 		}
 	} catch (error) {
+		return next(new AppError(error.message, 500));
+	}
+}
+
+export async function emailConfirmation(req, res, next) {
+	try {
+		const { token } = req.params;
+		// eslint-disable-next-line no-unused-vars
+		const [err, { id, isValid }] = getIdFromToken(token);
+
+		const user = await User.findOne({
+			where: {
+				id: id,
+			},
+		});
+		if (isValid) {
+			user.isValid = true;
+			await user.save();
+		}
+
+		res.redirect('/');
+	} catch (error) {
+		console.log(error, 'errors');
 		return next(new AppError(error.message, 500));
 	}
 }
