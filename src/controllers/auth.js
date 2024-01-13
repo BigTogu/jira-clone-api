@@ -6,11 +6,15 @@ import { getIdFromToken } from '../jwt/index.js';
 
 export async function register(req, res, next) {
 	try {
-		const { username, password, email } = req.body;
+		const { username, lastName, password, email, country, telephone } =
+			req.body;
 		const newUser = await User.create({
-			username: username,
-			password: password,
-			email: email,
+			username,
+			password,
+			email,
+			lastName,
+			country,
+			telephone,
 		});
 
 		const verifyToken = getToken(newUser.id, true);
