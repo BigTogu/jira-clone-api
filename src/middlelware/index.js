@@ -13,10 +13,10 @@ export async function middleware(req, res, next) {
 				return res.status(403).json({ error: err });
 			}
 
-			const { id } = tokenDecoded;
+			const { id, isValid } = tokenDecoded;
 			const user = await User.findOne({ where: { id } });
 
-			if (user) {
+			if (user && isValid) {
 				req.user = user;
 				return next();
 			} else {

@@ -46,7 +46,9 @@ export async function login(req, res, next) {
 		}
 
 		const isValidPassword = await user.validPassword(password);
-		if (isValidPassword) return res.json({ token: getToken(user.id) });
+
+		if (isValidPassword)
+			return res.json({ token: getToken(user.id, user.isValid) });
 		else {
 			return next(new AppError('Contraseña no válida', 400));
 		}
@@ -71,9 +73,11 @@ export async function emailConfirmation(req, res, next) {
 			await user.save();
 		}
 
-		res.redirect('/');
+		// res.json({
+		// 	title: 'Te has registrado correctamente',
+		// });
+		res.redirect('/login');
 	} catch (error) {
-		console.log(error, 'errors');
 		return next(new AppError(error.message, 500));
 	}
 }
