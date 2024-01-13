@@ -1,14 +1,13 @@
 import jwt from 'jsonwebtoken';
 import { claveSecreta } from '../constants/configs.js';
 
-export function getToken(id) {
-	return jwt.sign(
-		{
-			id: id,
-		},
-		claveSecreta,
-		{ expiresIn: '48h' },
-	);
+export function getToken(id, isValid) {
+	const payload = { id };
+	if (isValid !== undefined) {
+		payload.isValid = isValid;
+	}
+
+	return jwt.sign(payload, claveSecreta, { expiresIn: '48h' });
 }
 
 export function getIdFromToken(token) {
