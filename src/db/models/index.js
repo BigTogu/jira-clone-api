@@ -3,7 +3,6 @@ import { DataTypes, Sequelize } from 'sequelize';
 
 import sequelize from '../config.js';
 
-
 export const User = sequelize.define(
 	'User',
 	{
@@ -26,6 +25,11 @@ export const User = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: false,
 			unique: true,
+		},
+		isValid: {
+			type: DataTypes.BOOLEAN,
+			allowNull: false,
+			defaultValue: false,
 		},
 		group_id: {
 			type: Sequelize.UUID,
