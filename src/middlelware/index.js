@@ -10,7 +10,7 @@ export async function middleware(req, res, next) {
 			const [err, tokenDecoded] = getIdFromToken(token);
 
 			if (err) {
-				return res.status(403).json({ error: err });
+				return res.status(401).json({ error: err });
 			}
 
 			const { id, isValid } = tokenDecoded;
@@ -20,15 +20,19 @@ export async function middleware(req, res, next) {
 				req.user = user;
 				return next();
 			} else {
-				res.status(403).json({ error: { message: 'Usuario no encontrado' } });
+				res.status(404).json({
+					error: {
+						message: isValid ? 'Usuario no encontrado' : 'token no valido',
+					},
+				});
 			}
 		} else {
-			res.status(403).json({
+			res.status(401).json({
 				error: { message: 'Formato de token incorrecto' },
 			});
 		}
 	} catch (error) {
-		console.log(error, 'error');
+		console.error(error, 'error');
 		return res
 			.status(500)
 			.json({ error: { message: 'Error interno del servidor' } });

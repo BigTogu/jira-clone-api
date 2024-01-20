@@ -10,6 +10,7 @@ export class AppError extends Error {
 
 // eslint-disable-next-line no-unused-vars
 export function handleError(err, req, res, next) {
+	//Si err.status no existe, le asignamos 'fail'
 	err.status = err.status || 'fail';
 	err.statusCode = err.statusCode || 500;
 

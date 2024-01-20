@@ -21,7 +21,7 @@ export async function sendEmail(email, subject, text, verifyToken) {
 
 		await transporter.sendMail(mailOptions);
 	} catch (err) {
-		console.log('Email not sent');
-		console.log(err);
+		console.error('Email not sent');
+		console.error(err);
 	}
 }
