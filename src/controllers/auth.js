@@ -8,14 +8,18 @@ export async function register(req, res, next) {
 	try {
 		const { username, lastName, password, email, country, telephone } =
 			req.body;
-		const newUser = await User.create({
-			username,
-			password,
-			email,
-			lastName,
-			country,
-			telephone,
-		});
+		try {
+			const newUser = await User.create({
+				username,
+				password,
+				email,
+				lastName,
+				country,
+				telephone,
+			});
+		} catch (error) {
+			return next(new AppError(error.message, 400));
+		}
 
 		const verifyToken = getToken(newUser.id, true);
 
