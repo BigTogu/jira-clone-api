@@ -15,5 +15,6 @@
 		"quotes": ["error", "single"],
 		"semi": ["error", "always"],
 		"func-style": ["error", "declaration"]
+		// "no-console": ["error", { "allow": ["warn", "error"] }]
 	}
 }
