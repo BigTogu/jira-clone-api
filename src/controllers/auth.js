@@ -18,7 +18,7 @@ export async function register(req, res, next) {
 		});
 
 		const verifyToken = getToken(newUser.id, true);
-		console.log(verifyToken, 'verifyLog');
+
 		await sendEmail(
 			email,
 			'Account Verification Link',
@@ -53,7 +53,7 @@ export async function login(req, res, next) {
 		if (isValidPassword)
 			return res.json({ token: getToken(user.id, user.isValid) });
 		else {
-			return next(new AppError('Contraseña no válida', 400));
+			return next(new AppError('Contraseña no válida', 401));
 		}
 	} catch (error) {
 		return next(new AppError(error.message, 500));
