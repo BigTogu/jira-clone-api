@@ -1,4 +1,4 @@
-import { User } from '../db/models/index.js';
+import { Users } from '../db/models/index.js';
 import { getToken } from '../jwt/index.js';
 import { AppError } from '../statusCodes/error.js';
 import { sendEmail } from '../utils/sendEmail.js';
@@ -6,19 +6,17 @@ import { getIdFromToken } from '../jwt/index.js';
 
 export async function register(req, res, next) {
 	try {
-		const { username, lastName, password, email, country, telephone } =
-			req.body;
+		const { username, lastName, password, email } = req.body;
+		let newUser;
 		try {
-			const newUser = await User.create({
+			newUser = await Users.create({
 				username,
 				password,
 				email,
 				lastName,
-				country,
-				telephone,
 			});
 		} catch (error) {
-			return next(new AppError(error.message, 400));
+			return next(new AppError(error.message, 409));
 		}
 
 		const verifyToken = getToken(newUser.id, true);
@@ -43,7 +41,7 @@ export async function register(req, res, next) {
 export async function login(req, res, next) {
 	try {
 		const { username, password } = req.body;
-		const user = await User.findOne({
+		const user = await Users.findOne({
 			where: {
 				username: username,
 			},
@@ -70,7 +68,7 @@ export async function emailConfirmation(req, res, next) {
 		// eslint-disable-next-line no-unused-vars
 		const [err, { id, isValid }] = getIdFromToken(token);
 
-		const user = await User.findOne({
+		const user = await Users.findOne({
 			where: {
 				id: id,
 			},

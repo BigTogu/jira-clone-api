@@ -4,7 +4,7 @@ import request from 'supertest';
 import { getAuthenticationHeader } from './scripts/setUp.js';
 import { userCorrectData } from './scripts/constants.js';
 import bcrypt from 'bcrypt';
-import { User } from '../src/db/models/index.js';
+import { Users } from '../src/db/models/index.js';
 
 describe('POST /register', () => {
 	test('should respond with a 201 status code', async () => {
@@ -19,7 +19,7 @@ describe('POST /register', () => {
 	});
 
 	test('password is encrypted', async () => {
-		const user = await User.findOne({
+		const user = await Users.findOne({
 			where: { username: userCorrectData.username },
 		});
 

@@ -3,8 +3,8 @@ import { DataTypes, Sequelize } from 'sequelize';
 
 import sequelize from '../config.js';
 
-export const User = sequelize.define(
-	'User',
+export const Users = sequelize.define(
+	'Users',
 	{
 		id: {
 			type: Sequelize.UUID,
@@ -31,33 +31,19 @@ export const User = sequelize.define(
 			allowNull: false,
 			unique: true,
 		},
-		country: {
-			type: DataTypes.STRING,
-			allowNull: true,
-			unique: false,
-		},
-		telephone: {
-			type: DataTypes.STRING,
-			allowNull: true,
-			unique: true,
-		},
 		isValid: {
 			type: DataTypes.BOOLEAN,
 			allowNull: false,
 			defaultValue: false,
 		},
-		group_id: {
-			type: Sequelize.UUID,
-			allowNull: true,
-		},
 	},
 	{
-		tableName: 'users',
+		tableName: 'Users',
 	},
 );
 
 // eslint-disable-next-line no-unused-vars
-User.beforeCreate((user, options) => {
+Users.beforeCreate((user, options) => {
 	return bcrypt
 		.hash(user.password, 10)
 		.then(hash => {
@@ -67,12 +53,34 @@ User.beforeCreate((user, options) => {
 			throw new Error(err);
 		});
 });
-User.prototype.validPassword = function (password) {
+Users.prototype.validPassword = function (password) {
 	return bcrypt.compare(password, this.password);
 };
 
-export const Group = sequelize.define(
-	'Group',
+export const BoardMembers = sequelize.define(
+	'BoardMembers',
+	{
+		id: {
+			type: DataTypes.UUID,
+			allowNull: false,
+			defaultValue: DataTypes.UUID,
+			primaryKey: true,
+		},
+		user_id: {
+			type: DataTypes.UUID,
+			allowNull: false,
+			defaultValue: DataTypes.UUID,
+		},
+		board_id: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+	},
+	{ tableName: 'BoardMembers' },
+);
+
+export const Boards = sequelize.define(
+	'Boards',
 	{
 		id: {
 			type: DataTypes.UUID,
@@ -85,33 +93,11 @@ export const Group = sequelize.define(
 			allowNull: false,
 		},
 	},
-	{ tableName: 'groups' },
+	{ tableName: 'Boards' },
 );
 
-export const Board = sequelize.define(
-	'Board',
-	{
-		id: {
-			type: DataTypes.UUID,
-			allowNull: false,
-			defaultValue: DataTypes.UUID,
-			primaryKey: true,
-		},
-		name: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		group_id: {
-			type: DataTypes.UUID,
-			allowNull: false,
-			defaultValue: DataTypes.UUID,
-		},
-	},
-	{ tableName: 'boards' },
-);
-
-export const Todo = sequelize.define(
-	'Todo',
+export const Todos = sequelize.define(
+	'Todos',
 	{
 		id: {
 			type: DataTypes.UUID,
@@ -127,11 +113,15 @@ export const Todo = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		responsable: {
+		responsable_id: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
 		task_duration: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		story_points: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
@@ -140,6 +130,50 @@ export const Todo = sequelize.define(
 			allowNull: false,
 			defaultValue: DataTypes.UUID,
 		},
+		description: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
 	},
-	{ tableName: 'todos' },
+	{ tableName: 'Todos' },
+);
+
+export const TodoTags = sequelize.define(
+	'TodoTags',
+	{
+		id: {
+			type: DataTypes.UUID,
+			allowNull: false,
+			defaultValue: DataTypes.UUID,
+			primaryKey: true,
+		},
+		todo_id: {
+			type: DataTypes.UUID,
+			allowNull: false,
+			defaultValue: DataTypes.UUID,
+		},
+		tag_id: {
+			type: DataTypes.UUID,
+			allowNull: false,
+			defaultValue: DataTypes.UUID,
+		},
+	},
+	{ tableName: 'TodoTags' },
+);
+
+export const Tags = sequelize.define(
+	'Tags',
+	{
+		id: {
+			type: DataTypes.UUID,
+			allowNull: false,
+			defaultValue: DataTypes.UUID,
+			primaryKey: true,
+		},
+		key: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+	},
+	{ tableName: 'Tags' },
 );

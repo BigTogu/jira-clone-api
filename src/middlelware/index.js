@@ -1,5 +1,5 @@
 import { getIdFromToken } from '../jwt/index.js';
-import { User } from '../db/models/index.js';
+import { Users } from '../db/models/index.js';
 
 export async function middleware(req, res, next) {
 	try {
@@ -14,7 +14,7 @@ export async function middleware(req, res, next) {
 			}
 
 			const { id, isValid } = tokenDecoded;
-			const user = await User.findOne({ where: { id } });
+			const user = await Users.findOne({ where: { id } });
 
 			if (user && isValid) {
 				req.user = user;
