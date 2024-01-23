@@ -4,11 +4,20 @@ import { BoardMembers, Boards } from '../db/models/index.js';
 export async function getBoards(req, res, next) {
 	// Viene del middleware
 	const user = req.user;
-	const boards = await BoardMembers.findAll({
+	const boardMembers = await BoardMembers.findAll({
 		where: {
 			user_id: user.id,
 		},
 	});
+
+	let boardIds = boardMembers.map(member => member.board_id);
+
+	const boards = await Boards.findAll({
+		where: {
+			id: boardIds,
+		},
+	});
+
 	try {
 		res.json({ boards: boards });
 	} catch (error) {
