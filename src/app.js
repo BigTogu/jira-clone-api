@@ -1,6 +1,7 @@
 import express from 'express';
 import authRouter from './routes/User/auth.js';
 import router from './routes/User/index.js';
+import routerBoard from './routes/Board/index.js';
 import { middleware } from './middlelware/index.js';
 import { handleError } from './statusCodes/error.js';
 import cors from 'cors';
@@ -24,6 +25,7 @@ app.use(
 app.use(authRouter);
 app.use(middleware);
 app.use(router);
+app.use(routerBoard);
 
 app.use(handleError);
 

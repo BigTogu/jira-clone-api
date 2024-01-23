@@ -61,9 +61,9 @@ export const BoardMembers = sequelize.define(
 	'BoardMembers',
 	{
 		id: {
-			type: DataTypes.UUID,
+			type: Sequelize.UUID,
 			allowNull: false,
-			defaultValue: DataTypes.UUID,
+			defaultValue: Sequelize.UUIDV4,
 			primaryKey: true,
 		},
 		user_id: {
@@ -75,6 +75,16 @@ export const BoardMembers = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+		isAdmin: {
+			type: DataTypes.BOOLEAN,
+			allowNull: false,
+			defaultValue: false,
+		},
+		isOwner: {
+			type: DataTypes.BOOLEAN,
+			allowNull: false,
+			defaultValue: false,
+		},
 	},
 	{ tableName: 'BoardMembers' },
 );
@@ -83,9 +93,9 @@ export const Boards = sequelize.define(
 	'Boards',
 	{
 		id: {
-			type: DataTypes.UUID,
+			type: Sequelize.UUID,
 			allowNull: false,
-			defaultValue: DataTypes.UUID,
+			defaultValue: Sequelize.UUIDV4,
 			primaryKey: true,
 		},
 		name: {
