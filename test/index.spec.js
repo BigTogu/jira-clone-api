@@ -2,7 +2,7 @@
 import app from '../src/app.js';
 import request from 'supertest';
 import { getAuthenticationHeader } from './scripts/setUp.js';
-import { userCorrectData } from './scripts/constants.js';
+import { userCorrectData, invalidUserData } from './scripts/constants.js';
 import bcrypt from 'bcrypt';
 import { Users } from '../src/db/models/index.js';
 
@@ -56,16 +56,16 @@ describe('POST /login', () => {
 });
 
 describe('GET /me', () => {
-	test('should respond with a 200 status code', async () => {
+	test('should respond with a 401 status code', async () => {
 		const headerAuthentication = await getAuthenticationHeader(
-			userCorrectData.username,
+			invalidUserData.username,
 		);
 		const response = await request(app)
 			.get('/me')
 			.set('authorization', headerAuthentication)
 			.send();
 
-		expect(response.statusCode).toBe(200);
+		expect(response.statusCode).toBe(401);
 	});
 
 	test('should respond with a json object containing the user with a id, username and email', async () => {
@@ -78,6 +78,7 @@ describe('GET /me', () => {
 			.get('/me')
 			.set('authorization', headerAuthentication)
 			.send();
+
 		expectedFields.forEach(field => {
 			expect(response.body[field]).toBeDefined();
 		});
@@ -119,7 +120,6 @@ describe('PUT /me', () => {
 			'createdAt',
 			'password',
 			'updatedAt',
-			'group_id',
 		];
 
 		const userData = {

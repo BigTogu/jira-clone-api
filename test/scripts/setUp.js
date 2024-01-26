@@ -1,17 +1,16 @@
 import { Users } from '../../src/db/models/index.js';
 import { getToken } from '../../src/jwt/index.js';
-import { userCorrectData } from './constants.js';
+import { userCorrectData, invalidUserData } from './constants.js';
 import sequelize from '../../src/db/config.js';
 
 // eslint-disable-next-line no-undef
 beforeAll(async () => {
-	console.log('base de datos de test eliminada');
 	try {
 		sequelize
 			.sync()
-			.then(() => {
-				console.log('Sync models');
-				Users.create(userCorrectData);
+			.then(async () => {
+				await Users.create(userCorrectData);
+				await Users.create(invalidUserData);
 			})
 			.catch(error => {
 				console.error('Connection fail', error);
@@ -19,7 +18,14 @@ beforeAll(async () => {
 	} catch (error) {
 		console.log(error);
 	}
-	console.log('usuario creado');
+});
+
+// eslint-disable-next-line no-undef
+afterAll(async () => {
+	await Users.destroy({
+		where: {},
+		truncate: true,
+	});
 });
 
 export async function getAuthenticationHeader(username) {

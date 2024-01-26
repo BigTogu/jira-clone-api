@@ -13,17 +13,21 @@ export async function middleware(req, res, next) {
 				return res.status(401).json({ error: err });
 			}
 
-			const { id, isValid } = tokenDecoded;
+			const { id } = tokenDecoded;
 			const user = await Users.findOne({ where: { id } });
 
-			if (user && isValid) {
+			if (user) {
+				if (!user.isValid) {
+					return res.status(401).json({
+						error: { message: 'Usuario no válido' },
+					});
+				}
+
 				req.user = user;
 				return next();
 			} else {
 				res.status(404).json({
-					error: {
-						message: isValid ? 'Usuario no encontrado' : 'token no valido',
-					},
+					error: { message: 'Usuario no encontrado' },
 				});
 			}
 		} else {
