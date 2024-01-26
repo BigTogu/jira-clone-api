@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "DOTENV_CONFIG_PATH=.env.test jest --detectOpenHandles",
+    "test": "DOTENV_CONFIG_PATH=.env.test node --trace-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles",
     "dev": "nodemon -r dotenv/config src/index.js dotenv_config_path=.env.local dotenv_config_debug=true",
     "dev-with-local": "node -r dotenv/config src/index.js dotenv_config_path=.env.local dotenv_config_debug=true",
     "lint": "eslint src/**/*.js",
@@ -29,6 +29,7 @@
     "prettier": "^3.1.0",
     "prettier-plugin-packagejson": "^2.4.9",
     "sequelize": "^6.35.1",
+    "sqlite3": "^5.1.7",
     "supertest": "^6.3.3"
   },
   "lint-staged": {
