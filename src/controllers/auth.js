@@ -8,7 +8,8 @@ export async function register(req, res, next) {
 	try {
 		const { username, lastName, password, email, token } = req.body;
 		if (token) {
-			const [err, { id, groupId, email, userWhoInvites }] =
+			// eslint-disable-next-line no-unused-vars
+			const [_err, { id, groupId, email, userWhoInvites }] =
 				getIdFromToken(token);
 			try {
 				await Users.findOne({
