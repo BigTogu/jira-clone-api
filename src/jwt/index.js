@@ -18,3 +18,9 @@ export function getIdFromToken(token) {
 		return [null, decoded];
 	});
 }
+
+export function createTokenForGroup(groupId, userWhoInvites, email) {
+	return jwt.sign({ groupId, email, userWhoInvites }, claveSecreta, {
+		expiresIn: '48h',
+	});
+}

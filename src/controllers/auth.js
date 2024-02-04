@@ -1,4 +1,4 @@
-import { Users } from '../db/models/index.js';
+import { Users, BoardMembers } from '../db/models/index.js';
 import { getToken } from '../jwt/index.js';
 import { AppError } from '../statusCodes/error.js';
 import { sendEmail } from '../utils/sendEmail.js';
@@ -6,7 +6,37 @@ import { getIdFromToken } from '../jwt/index.js';
 
 export async function register(req, res, next) {
 	try {
-		const { username, lastName, password, email } = req.body;
+		const { username, lastName, password, email, token } = req.body;
+		if (token) {
+			const [err, { id, groupId, email, userWhoInvites }] =
+				getIdFromToken(token);
+			try {
+				await Users.findOne({
+					where: {
+						id: userWhoInvites,
+					},
+				});
+			} catch (error) {
+				return next(new AppError('Usuario no encontrado', 404));
+			}
+			const invitedUser = await Users.create({
+				username,
+				password,
+				email,
+				lastName,
+				isValid: true,
+			});
+			await BoardMembers.create({
+				board_id: groupId,
+				user_id: invitedUser.id,
+				isAdmin: false,
+				isOwner: false,
+			});
+			return res.json({
+				message: 'Usuario creado',
+				token: getToken(invitedUser.id),
+			});
+		}
 		let newUser;
 		try {
 			newUser = await Users.create({
