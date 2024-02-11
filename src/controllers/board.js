@@ -31,11 +31,25 @@ export async function createBoard(req, res, next) {
 	const { name } = req.body;
 	let newBoard;
 
+	const count = await Boards.count({
+		where: {
+			name: name,
+		},
+	});
+
+	const key =
+		count > 0
+			? `${name.replace(/\s/g, '-')}-${count}`
+			: name.replace(/\s/g, '-');
+	console.log(key, 'key');
+
 	try {
 		newBoard = await Boards.create({
 			name,
+			key,
 		});
 	} catch (error) {
+		console.log(error, 'error......');
 		return next(new AppError(error.message, 409));
 	}
 
