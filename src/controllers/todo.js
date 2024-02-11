@@ -1,5 +1,6 @@
 import { AppError } from '../statusCodes/error.js';
-import { BoardMembers, Boards, Todos } from '../db/models/index.js';
+import { BoardMembers, Todos } from '../db/models/index.js';
+import { todoStatus } from '../constants/enums.js';
 
 function transformQuery(initialQuery, responsibleId, status) {
 	let query = initialQuery;
@@ -23,18 +24,18 @@ function transformQuery(initialQuery, responsibleId, status) {
 
 export async function getTodos(req, res, next) {
 	const user = req.user;
-	const { responsibleId, status } = req.query;
+	const { responsibleId, status, boardId } = req.query;
 	const initialQuery = {
-		board_id: req.params.boardId,
+		boardId: boardId,
 	};
+
 	const queryForTodos = transformQuery(initialQuery, responsibleId, status);
 
-	// Check if user is a member of the board
 	try {
 		await BoardMembers.findOne({
 			where: {
-				board_id: req.params.boardId,
-				user_id: user.id,
+				boardId,
+				userId: user.id,
 			},
 		});
 	} catch (error) {
@@ -54,30 +55,22 @@ export async function getTodos(req, res, next) {
 	}
 }
 
-export async function createBoard(req, res, next) {
-	const { name } = req.body;
-	let newBoard;
+export async function createTodo(req, res, next) {
+	const { title, boardId, status } = req.body;
+	let newTodo;
 
 	try {
-		newBoard = await Boards.create({
-			name,
-		});
-	} catch (error) {
-		return next(new AppError(error.message, 409));
-	}
-
-	try {
-		await BoardMembers.create({
-			board_id: newBoard.id,
-			user_id: req.user.id,
-			isAdmin: true,
-			isOwner: true,
+		newTodo = await Todos.create({
+			title,
+			boardId,
+			status: status ? status : todoStatus.TO_DO,
 		});
 	} catch (error) {
 		return next(new AppError(error.message, 409));
 	}
 
 	res.status(201).json({
-		message: 'Board Creado',
+		message: 'Todo Creado',
+		data: { title: newTodo.title, id: newTodo.id },
 	});
 }

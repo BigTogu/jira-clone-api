@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { getTodos, createTodo } from './../../controllers/todo.js';
 
-const routerBoard = Router();
+const routerTodos = Router();
 
-routerBoard.get('/todos', getTodos);
-routerBoard.post('/todos', createTodo);
+routerTodos.get('/todos', getTodos);
+routerTodos.post('/todos', createTodo);
 
-export default routerBoard;
+export default routerTodos;

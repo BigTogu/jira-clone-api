@@ -13,6 +13,9 @@ const sequelize = new Sequelize(database, username, password, {
 	dialect: 'postgres',
 	logging: true,
 	port: port,
+	define: {
+		underscored: true,
+	},
 });
 
 sequelize

@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { DataTypes, Sequelize } from 'sequelize';
-
+import { todoStatusEnum } from '../../constants/enums.js';
 import sequelize from '../config.js';
 
 export const Users = sequelize.define(
@@ -66,13 +66,13 @@ export const BoardMembers = sequelize.define(
 			defaultValue: Sequelize.UUIDV4,
 			primaryKey: true,
 		},
-		user_id: {
-			type: DataTypes.UUID,
+		userId: {
+			type: Sequelize.UUID,
 			allowNull: false,
-			defaultValue: DataTypes.UUID,
+			defaultValue: Sequelize.UUIDV4,
 		},
-		board_id: {
-			type: DataTypes.STRING,
+		boardId: {
+			type: Sequelize.UUID,
 			allowNull: false,
 		},
 		isAdmin: {
@@ -102,6 +102,10 @@ export const Boards = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+		key: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
 	},
 	{ tableName: 'Boards' },
 );
@@ -110,39 +114,40 @@ export const Todos = sequelize.define(
 	'Todos',
 	{
 		id: {
-			type: DataTypes.UUID,
+			type: Sequelize.UUID,
 			allowNull: false,
-			defaultValue: DataTypes.UUID,
+			defaultValue: Sequelize.UUIDV4,
 			primaryKey: true,
 		},
 		status: {
-			type: DataTypes.STRING,
+			type: Sequelize.ENUM,
+			values: todoStatusEnum,
 			allowNull: false,
 		},
 		title: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		responsable_id: {
-			type: DataTypes.STRING,
-			allowNull: false,
+		responsibleId: {
+			type: Sequelize.UUID,
+			allowNull: true,
 		},
-		task_duration: {
+		taskDuration: {
 			type: DataTypes.STRING,
-			allowNull: false,
+			allowNull: true,
 		},
-		story_points: {
+		storyPoints: {
 			type: DataTypes.STRING,
-			allowNull: false,
+			allowNull: true,
 		},
-		board_id: {
-			type: DataTypes.UUID,
+		boardId: {
+			type: Sequelize.UUID,
 			allowNull: false,
-			defaultValue: DataTypes.UUID,
+			defaultValue: Sequelize.UUIDV4,
 		},
 		description: {
 			type: DataTypes.STRING,
-			allowNull: false,
+			allowNull: true,
 		},
 	},
 	{ tableName: 'Todos' },
@@ -152,20 +157,20 @@ export const TodoTags = sequelize.define(
 	'TodoTags',
 	{
 		id: {
-			type: DataTypes.UUID,
+			type: Sequelize.UUID,
 			allowNull: false,
-			defaultValue: DataTypes.UUID,
+			defaultValue: Sequelize.UUIDV4,
 			primaryKey: true,
 		},
-		todo_id: {
-			type: DataTypes.UUID,
+		todoId: {
+			type: Sequelize.UUID,
 			allowNull: false,
-			defaultValue: DataTypes.UUID,
+			defaultValue: Sequelize.UUIDV4,
 		},
-		tag_id: {
-			type: DataTypes.UUID,
+		tagId: {
+			type: Sequelize.UUID,
 			allowNull: false,
-			defaultValue: DataTypes.UUID,
+			defaultValue: Sequelize.UUIDV4,
 		},
 	},
 	{ tableName: 'TodoTags' },
@@ -187,3 +192,34 @@ export const Tags = sequelize.define(
 	},
 	{ tableName: 'Tags' },
 );
+
+// Relations
+Users.belongsToMany(Boards, {
+	through: BoardMembers,
+	foreignKey: 'userId',
+	otherKey: 'boardId',
+});
+Boards.belongsToMany(Users, {
+	through: BoardMembers,
+	foreignKey: 'boardId',
+	otherKey: 'userId',
+});
+
+Todos.belongsTo(sequelize.models.Boards, {
+	foreignKey: 'boardId',
+	as: 'board',
+});
+Todos.belongsTo(sequelize.models.Users, {
+	foreignKey: 'responsibleId',
+	as: 'responsible',
+});
+Todos.belongsToMany(Tags, {
+	through: TodoTags,
+	foreignKey: 'todoId',
+	otherKey: 'tagId',
+});
+Tags.belongsToMany(Todos, {
+	through: TodoTags,
+	foreignKey: 'tagId',
+	otherKey: 'todoId',
+});

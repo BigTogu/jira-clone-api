@@ -28,8 +28,8 @@ export async function register(req, res, next) {
 				isValid: true,
 			});
 			await BoardMembers.create({
-				board_id: groupId,
-				user_id: invitedUser.id,
+				boardId: groupId,
+				userId: invitedUser.id,
 				isAdmin: false,
 				isOwner: false,
 			});
@@ -71,10 +71,10 @@ export async function register(req, res, next) {
 
 export async function login(req, res, next) {
 	try {
-		const { username, password } = req.body;
+		const { email, password } = req.body;
 		const user = await Users.findOne({
 			where: {
-				username: username,
+				email: email,
 			},
 		});
 		if (!user) {

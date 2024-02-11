@@ -7,13 +7,13 @@ export async function home(req, res) {
 }
 
 export async function getMe(req, res, next) {
-	const { id, username, email, group_id } = req.user;
+	const { id, username, email, groupId } = req.user;
 	try {
 		res.json({
 			id,
 			username,
 			email,
-			group_id,
+			groupId,
 		});
 	} catch (error) {
 		return next(new AppError(error.message, 500));

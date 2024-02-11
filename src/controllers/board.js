@@ -8,11 +8,11 @@ export async function getBoards(req, res, next) {
 	const user = req.user;
 	const boardMembers = await BoardMembers.findAll({
 		where: {
-			user_id: user.id,
+			userId: user.id,
 		},
 	});
 
-	let boardIds = boardMembers.map(member => member.board_id);
+	let boardIds = boardMembers.map(member => member.boardId);
 
 	const boards = await Boards.findAll({
 		where: {
@@ -41,8 +41,8 @@ export async function createBoard(req, res, next) {
 
 	try {
 		await BoardMembers.create({
-			board_id: newBoard.id,
-			user_id: req.user.id,
+			boardId: newBoard.id,
+			userId: req.user.id,
 			isAdmin: true,
 			isOwner: true,
 		});
@@ -52,17 +52,17 @@ export async function createBoard(req, res, next) {
 
 	res.status(201).json({
 		message: 'Board Creado',
-		board_id: newBoard.id,
+		boardId: newBoard.id,
 	});
 }
 
 export async function inviteToBoard(req, res, next) {
-	const { board_id, email } = req.body;
+	const { boardId, email } = req.body;
 	let userToInvite;
 	try {
 		await Boards.findOne({
 			where: {
-				id: board_id,
+				id: boardId,
 			},
 		});
 	} catch (error) {
@@ -76,8 +76,8 @@ export async function inviteToBoard(req, res, next) {
 			},
 		});
 		await BoardMembers.create({
-			board_id: board_id,
-			user_id: userToInvite.id,
+			boardId,
+			userId: userToInvite.id,
 			isAdmin: false,
 			isOwner: false,
 		});
@@ -86,7 +86,7 @@ export async function inviteToBoard(req, res, next) {
 			message: 'Usuario añadido al board',
 		});
 	} catch (error) {
-		const tokenForGroup = createTokenForGroup(board_id, req.user.id, email);
+		const tokenForGroup = createTokenForGroup(boardId, req.user.id, email);
 		await sendEmailInvitation(
 			email,
 			'Account Verification Link',
