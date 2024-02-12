@@ -27,6 +27,21 @@ export async function getBoards(req, res, next) {
 	}
 }
 
+export async function getBoardById(req, res, next) {
+	const { boardId } = req.query;
+	const board = await Boards.findOne({
+		where: {
+			id: boardId,
+		},
+	});
+
+	try {
+		res.json({ board: board });
+	} catch (error) {
+		return next(new AppError(error.message, 500));
+	}
+}
+
 export async function createBoard(req, res, next) {
 	const { name } = req.body;
 	let newBoard;
