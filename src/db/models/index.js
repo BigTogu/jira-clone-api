@@ -208,6 +208,7 @@ Boards.belongsToMany(Users, {
 Todos.belongsTo(sequelize.models.Boards, {
 	foreignKey: 'boardId',
 	as: 'board',
+	onDelete: 'CASCADE',
 });
 Todos.belongsTo(sequelize.models.Users, {
 	foreignKey: 'responsibleId',

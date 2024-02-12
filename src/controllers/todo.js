@@ -71,6 +71,6 @@ export async function createTodo(req, res, next) {
 
 	res.status(201).json({
 		message: 'Todo Creado',
-		data: { title: newTodo.title, id: newTodo.id },
+		data: newTodo,
 	});
 }

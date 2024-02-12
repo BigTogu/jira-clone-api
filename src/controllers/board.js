@@ -20,8 +20,37 @@ export async function getBoards(req, res, next) {
 		},
 	});
 
+	const ownersBoards = await BoardMembers.findAll({
+		where: {
+			boardId: boardIds,
+			isOwner: true,
+		},
+	});
+
+	const userIds = ownersBoards.map(ownerBoard => ownerBoard.userId);
+
+	const owners = await Promise.all(
+		userIds.map(async userId => {
+			const user = await Users.findOne({
+				where: {
+					id: userId,
+				},
+			});
+			return user;
+		}),
+	);
+
+	let boardsAndTheirOwners = boards.map((board, index) => {
+		const boardJson = board.toJSON();
+
+		return {
+			...boardJson,
+			owner: owners[index] ? owners[index] : null,
+		};
+	});
+
 	try {
-		res.json({ boards: boards });
+		res.json({ boards: boardsAndTheirOwners });
 	} catch (error) {
 		return next(new AppError(error.message, 500));
 	}
@@ -81,7 +110,7 @@ export async function createBoard(req, res, next) {
 
 	res.status(201).json({
 		message: 'Board Creado',
-		boardId: newBoard.id,
+		data: { ...newBoard.toJSON(), owner: req.user },
 	});
 }
 
@@ -125,5 +154,37 @@ export async function inviteToBoard(req, res, next) {
 			email,
 		);
 		return next(new AppError(error.message, 409));
+	}
+}
+
+export async function deleteBoard(req, res, next) {
+	const { boardId } = req.query;
+
+	try {
+		const board = await Boards.findOne({
+			where: {
+				id: boardId,
+			},
+		});
+		if (!board) {
+			return res.status(404).json({ message: 'Tablero no encontrado' });
+		}
+
+		await BoardMembers.destroy({
+			where: {
+				boardId: boardId,
+			},
+		});
+
+		await Boards.destroy({
+			where: {
+				id: boardId,
+			},
+		});
+
+		res.status(200).json({ message: 'Tablero eliminado con éxito' });
+	} catch (error) {
+		console.error('--------------', error);
+		return next(new AppError(error.message, 500));
 	}
 }
