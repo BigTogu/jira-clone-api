@@ -6,6 +6,8 @@ import { sendEmailInvitation } from '../utils/sendEmail.js';
 export async function getBoards(req, res, next) {
 	// Viene del middleware
 	const user = req.user;
+	const { limit, offset } = req.query;
+
 	const boardMembers = await BoardMembers.findAll({
 		where: {
 			userId: user.id,
@@ -14,7 +16,9 @@ export async function getBoards(req, res, next) {
 
 	let boardIds = boardMembers.map(member => member.boardId);
 
-	const boards = await Boards.findAll({
+	const boards = await Boards.findAndCountAll({
+		limit,
+		offset,
 		where: {
 			id: boardIds,
 		},
@@ -40,7 +44,7 @@ export async function getBoards(req, res, next) {
 		}),
 	);
 
-	let boardsAndTheirOwners = boards.map((board, index) => {
+	let boardsAndTheirOwners = boards.rows.map((board, index) => {
 		const boardJson = board.toJSON();
 
 		return {
@@ -50,7 +54,12 @@ export async function getBoards(req, res, next) {
 	});
 
 	try {
-		res.json({ boards: boardsAndTheirOwners });
+		res.json({
+			boards: boardsAndTheirOwners,
+			totalboards: boards.count,
+			totalPage: Math.ceil(boards.count / limit),
+			currentPage: Math.ceil(offset / limit),
+		});
 	} catch (error) {
 		return next(new AppError(error.message, 500));
 	}
